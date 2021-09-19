@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import {environment} from '../config/app';
-import {userSchema} from './schema/user';
-import {postSchema} from './schema/post';
+import {User, userSchema} from './schema/user';
+import {Post, postSchema} from './schema/post';
 const env = process.env.NODE_ENV || "development";
 
 /**
@@ -15,7 +15,7 @@ db.on('error', () => {
     console.error("Error while connecting to DB");
 });
 
-const Users = mongoose.model('Users', userSchema);
-const Posts = mongoose.model('Posts', postSchema);
+const Users = mongoose.model<User>('Users', userSchema);
+const Posts = mongoose.model<Post>('Posts', postSchema);
 
 export {Users, Posts};

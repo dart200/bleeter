@@ -4,7 +4,7 @@ export const typeDefs = gql`
 	type User {
 		_id:ID
 		email: String
-		userName:String
+		username:String
 		firstName:String
 		lastName:String
 		createdAt: Float
@@ -39,7 +39,7 @@ export const typeDefs = gql`
 	input UserInput {
 		firstName:String
 		lastName:String
-		userName:String
+		username:String
 		email: String
 	}
 

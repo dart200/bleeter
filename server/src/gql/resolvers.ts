@@ -4,62 +4,28 @@ import {Users,Posts} from '../db/connect';
 * GraphQL Resolvers 
 **/
 
-export const resolvers={
+export const resolvers = {
   Query:{
-    getUsers:(root)=>{
-      return new Promise((resolve,reject) => {
-        Users.find((err,friends) => {
-          if(err) reject(err);
-          else resolve(friends);
-        });
-      });
-    },
-    findAPost:(root,{id}) => {
-      return new Promise((resolve,reject) => {
-        Posts.findOne({_id:id},(err,post) => {
-          if(err) reject(err);
-          else resolve(post);
-        });
-      });
-    },
+    getUsers: async (root) => Users.find().exec(),
+    findAPost:(root,{id}) => Posts.findOne({_id:id}).exec(),
   },
   Mutation:{
-    createUser: (root, {user}) => {
+    createUser: async (root, {user}) => {
+      console.log(user);
       const newFriend = new Users({
-        id: user.userName,
-        firstName : user.firstName,
-        lastName : user.lastName,
-        gender : user.gender,
-        language : user.language,
-        age : user.age,
-        email : user.email,
-        contacts:user.contacts
+        ...user,
+        createdAt: Date.now(),
       });
-
-      newFriend.id = newFriend._id;
-
-      return new Promise((resolve,reject) => {
-        newFriend.save(err => {
-          if(err) reject(err);
-          else resolve(newFriend);
-        });
-      });
+      await newFriend.save();
+      return newFriend;
     },
-    createPost:(root,{post})=>{
-      const newSeries = new Posts({
-        title:post.title,
-        year:post.year,
-        text:post.rating
-      });
-      
-      newSeries.id = post._id;
-      
-      return new Promise((resolve,reject) => {
-        newSeries.save(err => {
-          if(err) reject(err);
-          resolve(newSeries);
-        });
-      });
+    createPost: async (root,{post})=>{
+      const newPost = new Posts({
+        ...post,
+        at: Date.now(),
+      });      
+      await newPost.save();
+      return newPost;
     },
   },
 };

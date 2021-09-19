@@ -1,22 +1,17 @@
 import {gql} from 'apollo-server-express';
 
 export const typeDefs = gql`
-	type User{
-		id:ID
+	type User {
+		_id:ID
+		email: String
+		userName:String
 		firstName:String
 		lastName:String
-		userName:String
-		email: String
 		createdAt: Float
 	}
 
-	type Contact{
-  	firstName:String
-		lastName:String
-	}
-
 	type Post {
-		id:ID
+		_id:ID
 		at: Float
 		title:String
 		text:String
@@ -29,33 +24,26 @@ export const typeDefs = gql`
 		THREE
 	}
 
-	enum Gender{
+	enum Gender {
 		MALE
 		FEMALE
 		OTHER
 	}
 
 	input PostInput {
-		id:ID
-		at: Float
-		year:Int
-		rating:Rating
+		title: String,
+    text: String,
+    parent: ID,
 	}
 
 	input UserInput {
-		id:ID
 		firstName:String
 		lastName:String
 		userName:String
 		email: String
 	}
 
-	input ContactInput {
-		firstName:String
-		lastName:String
-	}
-
-	type Query{
+	type Query {
 		getUsers:[User]
 		findAPost(id:ID):Post
 	}

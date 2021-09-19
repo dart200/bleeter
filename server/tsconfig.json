@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "noImplicitAny": false,
     "sourceMap": true,
+    "allowJs": true,
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "../config/app.ts"]
 }

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import {JWT_KEY} from './config/app';
+import {JWT_KEY} from './config';
 import {User} from './db/schema/user';
 
 export const getPwdHash = async (pwd: string) => {

@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
-import {environment} from '../config/app';
+import {DB_STRING} from '../config';
 import {User, userSchema} from './schema/user';
 import {Post, postSchema} from './schema/post';
-const env = process.env.NODE_ENV || "development";
 
 /** Mongoose Connection **/
-mongoose.connect(environment[env].dbString);
+mongoose.connect(DB_STRING);
 
 const db = mongoose.connection;
 db.on('error', () => {

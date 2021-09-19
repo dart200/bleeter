@@ -2,7 +2,7 @@ import express from "express";
 import {ApolloServer} from 'apollo-server-express';
 import {resolvers} from './gql/resolvers';
 import {typeDefs} from './gql/schema';
-import {PORT} from './config/app';
+import {PORT} from './config';
 
 const main = async () => {
     const server = new ApolloServer({typeDefs, resolvers});

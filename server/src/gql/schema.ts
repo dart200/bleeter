@@ -16,23 +16,15 @@ export const typeDefs = gql`
 		parent:ID!
 	}
 
-	enum Rating{
-		ONE
-		TWO
-		THREE
+	type Query {
+		getUsers:[User]
+		findAPost(id:ID): Post
 	}
 
-	enum Gender {
-		MALE
-		FEMALE
-		OTHER
-	}
-
-	input PostInput {
-		title: String,
-    text: String,
-    parent: ID,
-	}
+  type CurUser {
+    user: User
+    token: ID
+  }
 
 	input UserInput {
 		email: String!
@@ -46,15 +38,11 @@ export const typeDefs = gql`
     password: String!
   }
 
-	type Query {
-		getUsers:[User]
-		findAPost(id:ID): Post
+	input PostInput {
+		title: String,
+    text: String,
+    parent: ID,
 	}
-
-  type CurUser {
-    user: User
-    token: ID
-  }
 
 	type Mutation{
 		createUser(user:UserInput): CurUser

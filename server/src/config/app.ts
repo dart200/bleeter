@@ -9,3 +9,4 @@ export const environment = {
         dbString: 'mongodb://localhost:27017/bleeter-prod'
     }
 }
+export const JWT_KEY = 'fake_token';

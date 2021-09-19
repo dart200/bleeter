@@ -5,8 +5,6 @@ export const typeDefs = gql`
 		_id:ID
 		email: String
 		username:String
-		firstName:String
-		lastName:String
 		createdAt: Float
 	}
 
@@ -37,19 +35,31 @@ export const typeDefs = gql`
 	}
 
 	input UserInput {
-		firstName:String
-		lastName:String
-		username:String
-		email: String
+		email: String!
+		username:String!
+    password: String!
 	}
+
+  input LoginInput {
+    email: String
+    username: String
+    password: String!
+  }
 
 	type Query {
 		getUsers:[User]
-		findAPost(id:ID):Post
+		findAPost(id:ID): Post
 	}
 
+  type CurUser {
+    user: User
+    token: ID
+  }
+
 	type Mutation{
-		createUser(user:UserInput):User
-		createPost(post:PostInput):Post
+		createUser(user:UserInput): CurUser
+    loginUser(login:LoginInput!): CurUser
+		changeUsername(token:ID, username: String): User
+		createPost(post:PostInput): Post
 	}
 `;

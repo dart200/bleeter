@@ -12,10 +12,14 @@
     "start": "ts-node ./src/index.ts",
     "dev": "ts-node-dev --respawn ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "drop-db": "mongo bleeter --eval 'db.dropDatabase();'"
+    "drop-db": "mongo bleeter --eval 'db.dropDatabase();'",
+    "print-users": "mongo bleeter --eval 'db.users.find()'",
+    "print-posts": "mongo bleeter --eval 'db.posts.find()'"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.5",
     "@types/node": "^16.9.2",
     "ts-node": "^10.2.1",
     "ts-node-dev": "^1.1.8",
@@ -23,6 +27,8 @@
   },
   "dependencies": {
     "apollo-server-express": "^3.3.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "graphql": "^15.5.3",
     "jsonwebtoken": "^8.5.1",

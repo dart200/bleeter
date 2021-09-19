@@ -1,0 +1,33 @@
+{
+  "name": "bleeter-server",
+  "version": "1.0.0",
+  "description": "serves up some bleets",
+  "main": "build/index.js",
+  "author": "Nick Swenson",
+  "license": "MIT",
+  "scripts": {
+    "prebuild-old": "tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "tsc",
+    "prestart-old": "npm run build",
+    "start": "ts-node ./src/index.ts",
+    "dev": "ts-node-dev --respawn ./src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "drop-db": "mongo bleeter --eval 'db.dropDatabase();'"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.9.2",
+    "ts-node": "^10.2.1",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "apollo-server-express": "^3.3.0",
+    "express": "^4.17.1",
+    "graphql": "^15.5.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.1.2",
+    "mongoose": "^6.0.6",
+    "nodemon": "^2.0.12"
+  }
+}

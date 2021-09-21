@@ -2,11 +2,11 @@ import {Box} from '@mui/material';
 import {createTheme, ThemeProvider as MuiThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-const darkTheme = createTheme({
+export const darkTheme = createTheme({
   palette: {mode: 'dark'},
 });
 
-const ThemeProvider = ({children}) => (
+export const ThemeProvider = ({children}) => (
   <MuiThemeProvider theme={darkTheme}>
     <CssBaseline/>
     <Box sx={{
@@ -21,5 +21,3 @@ const ThemeProvider = ({children}) => (
     </Box>
   </MuiThemeProvider>
 );
-
-export default ThemeProvider;

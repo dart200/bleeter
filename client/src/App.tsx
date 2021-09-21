@@ -1,3 +1,4 @@
+
 import {ThemeProvider} from './Theme';
 import {GQLProvider} from './gql/client';
 import {LoginProvider} from './Login';
@@ -13,6 +14,6 @@ const App = () => {
     </GQLProvider>
     </ThemeProvider>
   );
-}
+};
 
 export default App;

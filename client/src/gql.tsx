@@ -5,11 +5,11 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import {SERVER_URL} from "./config";
+import {GQL_URI} from "./config";
 
 const client = new ApolloClient({
-  uri: SERVER_URL,
-  cache: new InMemoryCache()
+  uri: GQL_URI,
+  cache: new InMemoryCache(), 
 });
 
 const GQLProvider = ({children}) => (

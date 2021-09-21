@@ -1,6 +1,5 @@
-
-import ThemeProvider from './Theme';
-import GQLProvider from './gql';
+import {ThemeProvider} from './Theme';
+import {GQLProvider} from './gql/client';
 import {LoginProvider} from './Login';
 import Main from './Main';
 

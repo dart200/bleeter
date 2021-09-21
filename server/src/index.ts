@@ -4,20 +4,21 @@ import {resolvers} from './gql/resolvers';
 import {typeDefs} from './gql/schema';
 import {PORT, GQL_URI} from './config';
 
-const main = async () => {
-    const server = new ApolloServer({typeDefs, resolvers});
-    const app = express();
-    await server.start();
-    server.applyMiddleware({app});
+const corsOptions = {
+  origin: "*",
+};
 
-    app.get('/', (req, res) => {
-        console.log("Apollo GraphQL Express server is ready");
-        res.send('graphql on /graphql');
-    });
+const main = async () => {
+  const server = new ApolloServer({typeDefs, resolvers});
+  await server.start();
+  
+  const app = express();
+  server.applyMiddleware({app, path: '/', cors: corsOptions});
 
   app.listen({port: PORT}, () => {
     console.log(`Server is running at ${GQL_URI}`);
   });
 };
 
-main();
+main()
+  .catch(err => console.log(err));

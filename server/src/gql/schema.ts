@@ -22,12 +22,12 @@ export const typeDefs = gql`
 		getPosts:[Post]
 	}
 
-  type CurUser {
+  type UserRsp {
     token: ID
     user: User
   }
 
-	input UserInput {
+	input CreateUserArgs {
 		name: String!
 		email: String!
 		username:String!
@@ -47,8 +47,8 @@ export const typeDefs = gql`
 	}
 
 	type Mutation{
-		createUser(user:UserInput): CurUser
-    loginUser(login:LoginInput!): CurUser
+		createUser(args: CreateUserArgs): UserRsp
+    loginUser(login:LoginInput!): UserRsp
 		changeUsername(token:ID, username: String): User
 		createPost(post:PostInput): Post
 	}

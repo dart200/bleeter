@@ -1,4 +1,5 @@
 import {Users,Posts} from '../db/connect';
+import {CreateUserArgs} from './gql-interface';
 import {getPwdHash, cmpPwd, genJwt, verifyJwt} from '../pwd';
 import * as log from '../log';
 
@@ -9,22 +10,22 @@ export const resolvers = {
     findAPost: (root,{id}) => Posts.findOne({_id:id}).exec(),
   },
   Mutation:{
-    createUser: async (root, {user}) => {
+    createUser: async (root, {args}: {args: CreateUserArgs}) => {
       const oldFriend = await Users.findOne({$or: [
-        {email: user.email},
-        {username: user.username},
+        {email: args.email},
+        {username: args.username},
       ]});
-      if (oldFriend?.email === user.email)
+      if (oldFriend?.email === args.email)
         throw Error("Email already exists. Please login instead.");
-      if (oldFriend?.username === user.username)
+      if (oldFriend?.username === args.username)
         throw Error("Username in use. Please choose another");
       
       const newFriend = new Users({
-        ...user,
+        ...args,
         createdAt: Date.now(),
       });
 
-      const {pwdHash} = await getPwdHash(user.password);
+      const {pwdHash} = await getPwdHash(args.password);
       newFriend.pwdHash = pwdHash;
 
       const token = await genJwt(newFriend);

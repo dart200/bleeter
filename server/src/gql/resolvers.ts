@@ -18,7 +18,7 @@ export const resolvers = {
       if (oldFriend?.email === args.email)
         throw Error("Email already exists. Please login instead.");
       if (oldFriend?.username === args.username)
-        throw Error("Username in use. Please choose another");
+        throw Error("Username in use. Please choose another.");
       
       const newFriend = new Users({
         ...args,
@@ -35,17 +35,17 @@ export const resolvers = {
       return {user: newFriend, token};
     },
 
-    loginUser: async (root, {login}) => {
+    loginUser: async (root, {args}: {args: CreateUserArgs}) => {
       const errMsg = 'Username/Password not found';
 
       const user = await Users.findOne({$or: [
-        {email: login.email},
-        {username: login.username},
+        {email: args.email},
+        {username: args.username},
       ]});
       if (!user)
         throw Error(errMsg);
 
-      const pwdSuccess = await cmpPwd(login.password, user);
+      const pwdSuccess = await cmpPwd(args.password, user);
       if (!pwdSuccess)
         throw Error(errMsg);
 

@@ -1,8 +1,11 @@
 import {useState, useContext, createContext, useEffect} from 'react';
 import {Box, Button, ButtonProps} from '@mui/material';
 import {LoadingButton} from '@mui/lab';
-import {useCreateUser, useMutation, LOGIN_USER} from './gql/hooks';
+import {Portal} from '@mui/core';
+import {useCreateUser, useLoginUser} from './gql/hooks';
 import {User} from './gql/gql-interface';
+
+import LoginForm from './forms/LoginForm'
 
 interface LoginContextType {
   jwt?: string;
@@ -22,12 +25,14 @@ export const LoginProvider = ({children}) => {
   const [jwt, setJwt] = useState<string|undefined>(undefined);
   const [user, setUser] = useState<User|undefined>(undefined);
 
-  const [loginUser, loginOpState] = useMutation(LOGIN_USER);
+  const [loginFormOpen, setLoginFormOpen] = useState(false)
+
+  const [loginUser, loginOpState] = useLoginUser();;
 
   const LoginUserButton = (props) => {
     return (
       <LoadingButton
-        onClick={() => {}}
+        onClick={() => setLoginFormOpen(true)}
         sx={props.sx}
         variant="outlined">
         Login
@@ -36,23 +41,16 @@ export const LoginProvider = ({children}) => {
   };
   const CreateUserButton = (props) => {
     const [createUser, {data, loading, error}] = useCreateUser();
-    useEffect(() => {
-      if (error)
-        console.log({error});
-    }, [error]);
     return (
       <LoadingButton
         onClick={() => {
           console.log('create user');
-          createUser({variables: {args: {
+          createUser({
             username: "dart200",
             name: "Nick",
             email: "dart200@gmail.com",
-            password: "weak password",
-          }}})
-            .catch(err => {
-              console.error(err);
-            })
+            password: "weak-password",
+          })
         }}
         loading={loading}
         sx={props.sx}
@@ -65,9 +63,15 @@ export const LoginProvider = ({children}) => {
     <Button sx={props.sx} variant="outlined">Logout</Button>
   );
 
-  return (
+  return <>
     <LoginContext.Provider value={{jwt, user, LoginUserButton, CreateUserButton, LogoutUserButton}}>
       {children}
     </LoginContext.Provider>
-  );
+    <LoginForm 
+      open={loginFormOpen}
+      onClose={() => setLoginFormOpen(false)}
+      onSubmit={(email, password) => loginUser({email, password})}
+      submitLoading={loginOpState.loading}
+    />
+  </>;
 };

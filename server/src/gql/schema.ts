@@ -34,7 +34,7 @@ export const typeDefs = gql`
     password: String!
 	}
 
-  input LoginInput {
+  input LoginUserArgs {
     email: String
     username: String
     password: String!
@@ -47,8 +47,8 @@ export const typeDefs = gql`
 	}
 
 	type Mutation{
-		createUser(args: CreateUserArgs): UserRsp
-    loginUser(login:LoginInput!): UserRsp
+		createUser(args:CreateUserArgs!): UserRsp
+    loginUser(args:LoginUserArgs!): UserRsp
 		changeUsername(token:ID, username: String): User
 		createPost(post:PostInput): Post
 	}

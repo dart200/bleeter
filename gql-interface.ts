@@ -12,6 +12,14 @@ export interface CreateUserArgs {
   password: string,
 };
 
+export type LoginUserArgs = {
+  email?: string,
+  password: string,
+} | {
+  username?: string,
+  password: string,
+};
+
 export interface UserRsp {
   token: string,
   user: User,

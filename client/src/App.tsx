@@ -1,4 +1,3 @@
-
 import {ThemeProvider} from './Theme';
 import {GQLProvider} from './gql/client';
 import {LoginProvider} from './Login';

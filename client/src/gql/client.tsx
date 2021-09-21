@@ -10,10 +10,6 @@ const client = new ApolloClient({
   cache: new InMemoryCache(), 
 });
 
-// export const POSTS = gql`
-
-// `;
-
 export const GQLProvider = ({children}) => (
   <ApolloProvider client={client}>
     {children}

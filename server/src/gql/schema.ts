@@ -19,14 +19,16 @@ export const typeDefs = gql`
 	type Query {
 		getUsers:[User]
 		findAPost(id:ID): Post
+		getPosts:[Post]
 	}
 
   type CurUser {
-    user: User
     token: ID
+    user: User
   }
 
 	input UserInput {
+		name: String!
 		email: String!
 		username:String!
     password: String!

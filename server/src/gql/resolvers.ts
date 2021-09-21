@@ -5,6 +5,7 @@ import * as log from '../log';
 export const resolvers = {
   Query:{
     getUsers: async (root) => Users.find().exec(),
+    getPosts: async (root) => Posts.find().sort({at: 'desc'}).exec(),
     findAPost: (root,{id}) => Posts.findOne({_id:id}).exec(),
   },
   Mutation:{

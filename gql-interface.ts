@@ -14,8 +14,6 @@ export interface CreateUserArgs {
 
 export type LoginUserArgs = {
   email?: string,
-  password: string,
-} | {
   username?: string,
   password: string,
 };

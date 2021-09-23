@@ -4,7 +4,7 @@ import {useCreateUser} from '../gql/hooks';
 import FullScreenDialog from "../comp/FullScreenDialog";
 
 const SignupForm = ({open, onClose, onSuccess}) => {
-  const [createUser, {data, loading, error}] = useCreateUser();
+  const [createUser, res] = useCreateUser();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -21,11 +21,12 @@ const SignupForm = ({open, onClose, onSuccess}) => {
   };
 
   useEffect(() => {
-    if (data) {
-      const {user, token} = data;
+    if (res.data) {
+      const {user, token} = res.data;
+      console.log(res);
       onSuccess(user, token);
     }
-  }, [data])
+  }, [res]);
 
   return (
     <FullScreenDialog

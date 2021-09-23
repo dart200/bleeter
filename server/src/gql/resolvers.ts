@@ -1,5 +1,5 @@
 import {Users,Posts} from '../db/connect';
-import {CreateUserArgs} from './gql-interface';
+import {CreateUserArgs, UserRsp, User, LoginUserArgs} from './gql-interface';
 import {getPwdHash, cmpPwd, genJwt, verifyJwt} from '../pwd';
 import * as log from '../log';
 
@@ -10,7 +10,7 @@ export const resolvers = {
     findAPost: (root,{id}) => Posts.findOne({_id:id}).exec(),
   },
   Mutation:{
-    createUser: async (root, {args}: {args: CreateUserArgs}) => {
+    createUser: async (root, {args}: {args: CreateUserArgs}): Promise<UserRsp> => {
       const oldFriend = await Users.findOne({$or: [
         {email: args.email},
         {username: args.username},
@@ -35,12 +35,12 @@ export const resolvers = {
       return {user: newFriend, token};
     },
 
-    loginUser: async (root, {args}: {args: CreateUserArgs}) => {
+    loginUser: async (root, {args}: {args: LoginUserArgs}): Promise<UserRsp> => {
       const errMsg = 'Username/Password not found';
 
       const user = await Users.findOne({$or: [
-        {email: args.email},
-        {username: args.username},
+        ...args.email ? [{email: args.email}] : [],
+        ...args.username ? [{username: args.username}] : [],
       ]});
       if (!user)
         throw Error(errMsg);
@@ -56,7 +56,7 @@ export const resolvers = {
       return {user, token};
     },
 
-    changeUsername: async (root, {token, username}) => {
+    changeUsername: async (root, {token, username}): Promise<User> => {
       const errMsg = 'Invalid authentication';
 
       const {id} = await verifyJwt(token)

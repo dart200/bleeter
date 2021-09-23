@@ -1,11 +1,28 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {DialogContent, Typography, TextField, Button, Stack} from "@mui/material";
-import {styled} from '@mui/material/styles';
+import {useLoginUser} from '../gql/hooks';
 import FullScreenDialog from "../comp/FullScreenDialog";
 
-const LoginForm = ({open, onClose, onSubmit, submitLoading}) => {
+const LoginForm = ({open, onClose, onSuccess}) => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState('');
+
+  const [loginUser, {data, loading, error}] = useLoginUser();
+
+  const onSubmit = () => {
+    loginUser({
+      email,
+      password,
+    });
+  };
+
+
+  useEffect(() => {
+    if (data) {
+      const {user, token} = data;
+      onSuccess(user, token);
+    }
+  }, [data])
 
   return (
     <FullScreenDialog
@@ -22,7 +39,8 @@ const LoginForm = ({open, onClose, onSubmit, submitLoading}) => {
           sx={{
             width: '100%',
             maxWidth: 400,
-            border: '1px solid #F6F6F6',
+            border: '1px solid',
+            borderColor: 'primary.main',
             borderRadius: '10px',
             padding: '20px',
           }}
@@ -31,7 +49,6 @@ const LoginForm = ({open, onClose, onSubmit, submitLoading}) => {
             Life's about to get quick...
           </Typography>
           <TextField
-            autoFocus
             id="email"
             label="Email Address"
             type="email"
@@ -49,12 +66,12 @@ const LoginForm = ({open, onClose, onSubmit, submitLoading}) => {
             onChange={evt => setPassword(evt.target.value)}/>
           <Stack direction="row" spacing={2} sx={{justifyContent: 'flex-end'}}>
             <Button
-              onClick={() => onSubmit(email, password)}
+              onClick={onSubmit}
               variant="outlined">
               Submit
             </Button>
             <Button
-              onClick={() => onClose()}
+              onClick={onClose}
               variant="outlined">
               Cancel
             </Button>

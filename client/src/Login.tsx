@@ -1,11 +1,11 @@
 import {useState, useContext, createContext, useEffect} from 'react';
 import {Box, Button, ButtonProps} from '@mui/material';
 import {LoadingButton} from '@mui/lab';
-import {Portal} from '@mui/core';
 import {useCreateUser, useLoginUser} from './gql/hooks';
 import {User} from './gql/gql-interface';
 
-import LoginForm from './forms/LoginForm'
+import LoginForm from './forms/LoginForm';
+import SignupForm from './forms/SignupForm';
 
 interface LoginContextType {
   jwt?: string;
@@ -25,9 +25,15 @@ export const LoginProvider = ({children}) => {
   const [jwt, setJwt] = useState<string|undefined>(undefined);
   const [user, setUser] = useState<User|undefined>(undefined);
 
-  const [loginFormOpen, setLoginFormOpen] = useState(false)
+  const [loginFormOpen, setLoginFormOpen] = useState(false);
+  const [signupFormOpen, setSignupFormOpen] = useState(false);
 
-  const [loginUser, loginOpState] = useLoginUser();;
+  const onSuccess = (user, token) => {
+    setUser(user);
+    setJwt(token);
+    setSignupFormOpen(false);
+    setLoginFormOpen(false);
+  };
 
   const LoginUserButton = (props) => {
     return (
@@ -40,19 +46,9 @@ export const LoginProvider = ({children}) => {
     );
   };
   const CreateUserButton = (props) => {
-    const [createUser, {data, loading, error}] = useCreateUser();
     return (
       <LoadingButton
-        onClick={() => {
-          console.log('create user');
-          createUser({
-            username: "dart200",
-            name: "Nick",
-            email: "dart200@gmail.com",
-            password: "weak-password",
-          })
-        }}
-        loading={loading}
+        onClick={() => setSignupFormOpen(true)}
         sx={props.sx}
         variant="outlined">
         Sign Up
@@ -70,8 +66,12 @@ export const LoginProvider = ({children}) => {
     <LoginForm 
       open={loginFormOpen}
       onClose={() => setLoginFormOpen(false)}
-      onSubmit={(email, password) => loginUser({email, password})}
-      submitLoading={loginOpState.loading}
+      onSuccess={onSuccess}
+    />
+    <SignupForm 
+      open={signupFormOpen}
+      onClose={() => setSignupFormOpen(false)}
+      onSuccess={onSuccess}
     />
   </>;
 };

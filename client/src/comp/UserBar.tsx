@@ -1,10 +1,11 @@
-import {Box, Button, Typography} from '@mui/material';
+import {Box, Button, Divider, Typography} from '@mui/material';
 import {useLoginContext} from '../Login';
+import NewBleetForm from '../forms/NewBleetForm';
 
 const UserBar = () => {
-  const {user, LoginUserButton, CreateUserButton} = useLoginContext();
+  const {user, LoginUserButton, CreateUserButton, LogoutUserButton} = useLoginContext();
 
-  return (
+  return <>
     <Box sx={{
       padding:'5%',
       display: 'flex',
@@ -15,11 +16,17 @@ const UserBar = () => {
         <CreateUserButton sx={{marginRight: '5%'}} />
         <LoginUserButton />
       </> : <>
-        <Typography>{user}</Typography>
-        <Button variant="outlined">Login</Button>
+        <Typography>{user.name}</Typography>
+        <LogoutUserButton />
       </>}
     </Box>
-  );
+    {user && <>
+      <Divider />
+      <Box sx={{padding:'5%'}}>
+        <NewBleetForm />
+      </Box>
+    </>}
+  </>;
 };
 
 export default UserBar;

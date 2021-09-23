@@ -24,7 +24,7 @@ function useMutation<RspType, ArgType>(
 const CREATE_USER = gql`
   mutation Mutation($args:CreateUserArgs!) {
     createUser(args:$args) {
-      user {_id email username createdAt},
+      user {_id email name username createdAt},
       token,
     }
   }
@@ -34,7 +34,7 @@ export const useCreateUser = () => useMutation<UserRsp, CreateUserArgs>(CREATE_U
 export const LOGIN_USER = gql`
   mutation LoginUserMutation($args:LoginUserArgs!) {
     loginUser(args:$args) {
-      user {_id email username createdAt}
+      user {_id email name username createdAt}
       token
     }
   }

@@ -33,7 +33,6 @@ export const LoginProvider = ({children}) => {
     setJwt(token);
     setSignupFormOpen(false);
     setLoginFormOpen(false);
-    console.log(user, token);
   };
 
   const LoginUserButton = (props) => {
@@ -57,7 +56,15 @@ export const LoginProvider = ({children}) => {
     );
   };
   const LogoutUserButton = (props) => (
-    <Button sx={props.sx} variant="outlined">Logout</Button>
+    <Button
+      sx={props.sx}
+      variant="outlined"
+      onClick={() => {
+        setUser(undefined);
+        setJwt(undefined);
+      }}>
+      Logout
+    </Button>
   );
 
   return <>

@@ -23,7 +23,6 @@ const SignupForm = ({open, onClose, onSuccess}) => {
   useEffect(() => {
     if (res.data) {
       const {user, token} = res.data;
-      console.log(res);
       onSuccess(user, token);
     }
   }, [res]);

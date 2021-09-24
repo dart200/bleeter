@@ -5,18 +5,24 @@ import NewBleetForm from '../forms/NewBleetForm';
 const UserBar = () => {
   const {user, LoginUserButton, CreateUserButton, LogoutUserButton} = useLoginContext();
 
+  console.log(user);
+
   return <>
     <Box sx={{
       padding:'5%',
       display: 'flex',
       flexDirection: 'row',
       justifyContent: !user ? 'flex-end' : 'space-between',
+      alignItems: 'center',
     }}>
       {!user ? <>
         <CreateUserButton sx={{marginRight: '5%'}} />
         <LoginUserButton />
       </> : <>
-        <Typography>{user.name}</Typography>
+        <Box>
+          <Typography>{user.name}</Typography>
+          <Typography> @{user.username}</Typography>
+        </Box>
         <LogoutUserButton />
       </>}
     </Box>

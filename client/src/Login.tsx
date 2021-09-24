@@ -62,6 +62,7 @@ export const LoginProvider = ({children}) => {
       onClick={() => {
         setUser(undefined);
         setJwt(undefined);
+        console.log("omg");
       }}>
       Logout
     </Button>

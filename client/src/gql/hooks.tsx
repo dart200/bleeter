@@ -6,6 +6,7 @@ function useMutation<RspType, ArgType>(
   funcName: string,
 ) {
   const [func, rsp] = apolloUseMutation<RspType, {args: ArgType}>(statement);
+  if (rsp.data) rsp.data = rsp.data[funcName];
 
   return [
     (args: ArgType) => func({variables: {args}})
@@ -13,11 +14,7 @@ function useMutation<RspType, ArgType>(
         console.error(err);
         console.log({err});
       }),
-    {
-      ...rsp,
-      // unwrap data object to Rsp Type
-      ...rsp.data && {data: rsp.data[funcName]}
-    } as typeof rsp,
+    rsp,
   ] as const
 }
 

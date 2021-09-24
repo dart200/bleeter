@@ -16,7 +16,6 @@ const LoginForm = ({open, onClose, onSuccess}) => {
     });
   };
 
-
   useEffect(() => {
     if (data) {
       const {user, token} = data;

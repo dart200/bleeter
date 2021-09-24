@@ -23,3 +23,16 @@ export interface UserRsp {
   token: string,
   user: User,
 };
+
+export interface Post {
+  _id: string,
+  at: number,
+  userID: string,
+  text: string,
+  replyTo?: string,
+};
+
+export interface CreatePostArgs {
+  token: string,
+  text: string,
+};

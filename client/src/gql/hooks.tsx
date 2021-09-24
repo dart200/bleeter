@@ -1,5 +1,5 @@
-import {useQuery, useMutation as apolloUseMutation, DocumentNode, gql, MutationTuple, MutationResult} from "@apollo/client";
-import {CreateUserArgs, LoginUserArgs, UserRsp} from './gql-interface';
+import {useQuery, useMutation as apolloUseMutation, DocumentNode, gql} from "@apollo/client";
+import {CreateUserArgs, LoginUserArgs, UserRsp, Post, CreatePostArgs} from './gql-interface';
 
 function useMutation<RspType, ArgType>(
   statement: DocumentNode,
@@ -37,5 +37,14 @@ export const LOGIN_USER = gql`
   }
 `;
 export const useLoginUser = () => useMutation<UserRsp, LoginUserArgs>(LOGIN_USER, 'loginUser');
+
+const CREATE_POST = gql`
+  mutation Mutation($args:CreateUserArgs!) {
+    createPost(args:$args) {
+      _id at userID text replyTo,
+    }
+  }
+`;
+export const useCreatePost = () => useMutation<Post, CreatePostArgs>(CREATE_POST ,'createPost')
 
 export {useQuery, useMutation};

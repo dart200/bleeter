@@ -12,9 +12,9 @@ export const typeDefs = gql`
 	type Post {
 		_id:ID
 		at: Float
-		title:String
+		userID: ID
 		text:String
-		parent:ID!
+		replyTo:ID!
 	}
 
 	type Query {
@@ -41,8 +41,8 @@ export const typeDefs = gql`
     password: String!
   }
 
-	input PostInput {
-		title: String,
+	input CreatePostArgs {
+		token: ID,
     text: String,
     parent: ID,
 	}
@@ -51,6 +51,6 @@ export const typeDefs = gql`
 		createUser(args:CreateUserArgs!): UserRsp
     loginUser(args:LoginUserArgs!): UserRsp
 		changeUsername(token:ID, username: String): User
-		createPost(post:PostInput): Post
+		createPost(args:CreatePostArgs!): Post
 	}
 `;

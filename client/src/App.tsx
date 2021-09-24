@@ -1,6 +1,6 @@
-import {ThemeProvider} from './Theme';
+import {ThemeProvider} from './theme';
 import {GQLProvider} from './gql/client';
-import {LoginProvider} from './Login';
+import {LoginProvider} from './login';
 import Main from './Main';
 
 const App = () => {

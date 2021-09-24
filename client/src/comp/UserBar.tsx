@@ -1,12 +1,10 @@
-import {Box, Button, Divider, Typography} from '@mui/material';
-import {useLoginContext} from '../Login';
+import {Box, Divider, Typography} from '@mui/material';
+import {useLoginContext} from '../login';
 import NewBleetForm from '../forms/NewBleetForm';
 
 const UserBar = () => {
   const {user, LoginUserButton, CreateUserButton, LogoutUserButton} = useLoginContext();
-
-  console.log(user);
-
+  
   return <>
     <Box sx={{
       padding:'5%',

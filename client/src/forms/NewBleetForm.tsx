@@ -1,9 +1,20 @@
 import {useState} from 'react';
 import {Stack, TextField, Button, Typography} from '@mui/material';
+import {useCreatePost} from '../gql/hooks';
 import {BLEET_MAX_LEN} from '../config';
+import {useLoginContext} from '../login';
 
-const NewBleetForm = () => {
-  const [bleet, setBleet] = useState('');
+const NewBleetForm = ({replyTo}: {replyTo?: any}) => {
+  const [text, setText] = useState('');
+  const {jwt} = useLoginContext()
+  const [createPost, {data, loading, error}] = useCreatePost();
+  
+  const submit = () => {
+    if (!jwt || !text) return;
+
+    createPost({token: jwt, text});
+    setText('');
+  }
 
   return <Stack direction="column" spacing={0} sx={{alignItems: 'flex-end'}}>
     <TextField
@@ -13,14 +24,14 @@ const NewBleetForm = () => {
       variant="outlined"
       placeholder="What's Happening?"
       multiline
-      error={bleet.length > BLEET_MAX_LEN}
-      helperText={bleet.length > BLEET_MAX_LEN ? "Please, we can't think *that* fast" : ' '}
-      value={bleet}
-      onChange={evt => setBleet(evt.target.value)}/>
+      error={text.length > BLEET_MAX_LEN}
+      helperText={text.length > BLEET_MAX_LEN ? "Please, we can't think *that* fast" : ' '}
+      value={text}
+      onChange={evt => setText(evt.target.value)}/>
     <Stack direction="row" spacing={2} sx={{alignItems: 'center'}}>
-      <Typography variant="subtitle2">{bleet.length}/{BLEET_MAX_LEN}</Typography>
+      <Typography variant="subtitle2">{text.length}/{BLEET_MAX_LEN}</Typography>
       <Button
-        onClick={() => {}}
+        onClick={submit}
         variant="contained">
         Bleet
       </Button>

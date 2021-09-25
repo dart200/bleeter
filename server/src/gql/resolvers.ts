@@ -1,13 +1,30 @@
 import {Users,Posts} from '../db/connect';
-import {CreateUserArgs, UserRsp, User, LoginUserArgs} from './gql-interface';
+import {
+  User, 
+  GetPostsArgs, GetPostsRsp,
+  CreateUserArgs, LoginUserArgs, UserRsp, CreatePostArgs} from './gql-interface';
 import {getPwdHash, cmpPwd, genJwt, verifyJwt} from '../pwd';
 import * as log from '../log';
 
 export const resolvers = {
   Query:{
-    getUsers: async (root) => Users.find().exec(),
-    getPosts: async (root) => Posts.find().sort({at: 'desc'}).exec(),
-    findAPost: (root,{id}) => Posts.findOne({_id:id}).exec(),
+    getUsers: async (root): Promise<User[]> => Users.find().exec(),
+    getPosts: async (root, {token, profileId}: GetPostsArgs): Promise<GetPostsRsp> => {
+      const userId = !profileId && token 
+        && await verifyJwt(token).then(ret => ret.id)
+
+      const [posts, users] = await Promise.all([
+        Posts.find({
+          ...profileId && {userId: profileId},
+          ...userId && {userId: {$ne: userId}},
+        })
+          .sort({at: 'desc'})
+          .exec(),
+        Users.find().exec(),
+      ]);
+
+      return {posts, users}
+    },
   },
   Mutation:{
     createUser: async (root, {args}: {args: CreateUserArgs}): Promise<UserRsp> => {
@@ -77,10 +94,14 @@ export const resolvers = {
       return user;
     },
 
-    createPost: async (root,{post})=>{
+    createPost: async (root,{args: {token, text, replyTo}}: {args: CreatePostArgs})=>{
+      const userId = await verifyJwt(token).then(ret => ret.id)
+
       const newPost = new Posts({
-        ...post,
         at: Date.now(),
+        userId,
+        text,
+        replyTo,
       });      
       await newPost.save();
       return newPost;

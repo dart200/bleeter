@@ -10,23 +10,22 @@ export const typeDefs = gql`
 	}
 
 	type Post {
-		_id:ID
-		at: Float
-		userID: ID
-		text:String
-		replyTo:ID!
+		_id:ID!
+		at: Float!
+		userId: ID!
+		text:String!
+		replyTo:ID
+	}
+
+	type GetPostsRsp {
+		posts:[Post],
+		users:[User],
 	}
 
 	type Query {
 		getUsers:[User]
-		findAPost(id:ID): Post
-		getPosts:[Post]
+		getPosts(token: ID, profileId: ID):GetPostsRsp
 	}
-
-  type UserRsp {
-    token: ID
-    user: User
-  }
 
 	input CreateUserArgs {
 		name: String!
@@ -41,10 +40,19 @@ export const typeDefs = gql`
     password: String!
   }
 
+	extend type User {
+		email: String
+	}
+
+	type UserRsp {
+    token: ID
+    user: User
+  }
+
 	input CreatePostArgs {
-		token: ID,
+		token: ID!,
     text: String,
-    parent: ID,
+    replyTo: ID,
 	}
 
 	type Mutation{

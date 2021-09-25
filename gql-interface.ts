@@ -1,9 +1,17 @@
-export interface User { 
+export interface PublicUser {
   _id: string,
-  email: string,
   name: string,
   username: string,
   createdAt: Number,
+}
+
+export interface User extends PublicUser { 
+  email: string,
+};
+
+export interface UserRsp {
+  token: string,
+  user: User,
 };
 
 export interface CreateUserArgs {
@@ -19,15 +27,10 @@ export type LoginUserArgs = {
   password: string,
 };
 
-export interface UserRsp {
-  token: string,
-  user: User,
-};
-
 export interface Post {
   _id: string,
   at: number,
-  userID: string,
+  userId: string,
   text: string,
   replyTo?: string,
 };
@@ -35,4 +38,15 @@ export interface Post {
 export interface CreatePostArgs {
   token: string,
   text: string,
+  replyTo?: string,
+};
+
+export interface GetPostsArgs {
+  token?: string,
+  profileId?: string,
+};
+
+export interface GetPostsRsp {
+  posts: Post[],
+  users: User[],
 };

@@ -12,7 +12,7 @@ const NewBleetForm = ({replyTo}: {replyTo?: any}) => {
   const submit = () => {
     if (!jwt || !text) return;
 
-    createPost({token: jwt, text});
+    createPost({token: jwt, text, replyTo});
     setText('');
   }
 

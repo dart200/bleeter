@@ -1,22 +1,77 @@
-import {useQuery, useMutation as apolloUseMutation, DocumentNode, gql} from "@apollo/client";
-import {CreateUserArgs, LoginUserArgs, UserRsp, Post, CreatePostArgs} from './gql-interface';
+import {
+  useQuery as apolloUseQuery,
+  useMutation as apolloUseMutation,
+  DocumentNode,
+  gql,
+} from "@apollo/client";
+import { useEffect } from "react";
+import {
+  GetPostsArgs, GetPostsRsp,
+  CreateUserArgs, LoginUserArgs, UserRsp,
+  CreatePostArgs, Post,
+} from './gql-interface';
 
-function useMutation<RspType, ArgType>(
+function genUseQuery<RspType, ArgType>(
   statement: DocumentNode,
   funcName: string,
 ) {
-  const [func, rsp] = apolloUseMutation<RspType, {args: ArgType}>(statement);
-  if (rsp.data) rsp.data = rsp.data[funcName];
+  return (variables: ArgType) => {
+    const {data, loading, error} = apolloUseQuery<RspType, ArgType>(
+      statement,
+      {...variables && {variables}}
+    );
+  
+    useEffect(() => {
+      if (error)
+        console.log({error});
+    }, [error]);
 
-  return [
-    (args: ArgType) => func({variables: {args}})
-      .catch(err => {
-        console.error(err);
-        console.log({err});
-      }),
-    rsp,
-  ] as const
-}
+    return {
+      loading,
+      data: data ? data[funcName] as RspType : undefined,
+      error
+    } as const;
+  };
+};
+
+function genUseMutation<RspType, ArgType>(
+  statement: DocumentNode,
+  funcName: string,
+) {
+  return () => {
+    const [func, rsp] = apolloUseMutation<RspType, {args: ArgType}>(statement);
+    if (rsp.data) rsp.data = rsp.data[funcName];
+  
+    return [
+      (args: ArgType) => func({variables: {args}})
+        .catch(err => {
+          console.error(err);
+          console.log({err});
+        }),
+      rsp,
+    ] as const;
+  };
+};
+
+const GET_POSTS = gql`
+  query Query($token: ID, $profileId: ID) {
+    getPosts(token:$token, profileId:$profileId) {
+      posts {
+        _id
+        at
+        userId
+        text
+        replyTo
+      }
+      users {
+        _id
+        name
+        username
+      }
+    }
+  }
+`
+export const useGetHome = genUseQuery<GetPostsRsp, GetPostsArgs>(GET_POSTS, 'getPosts');
 
 const CREATE_USER = gql`
   mutation Mutation($args:CreateUserArgs!) {
@@ -26,7 +81,7 @@ const CREATE_USER = gql`
     }
   }
 `;
-export const useCreateUser = () => useMutation<UserRsp, CreateUserArgs>(CREATE_USER, 'createUser');
+export const useCreateUser = genUseMutation<UserRsp, CreateUserArgs>(CREATE_USER, 'createUser');
 
 export const LOGIN_USER = gql`
   mutation LoginUserMutation($args:LoginUserArgs!) {
@@ -36,15 +91,13 @@ export const LOGIN_USER = gql`
     }
   }
 `;
-export const useLoginUser = () => useMutation<UserRsp, LoginUserArgs>(LOGIN_USER, 'loginUser');
+export const useLoginUser = genUseMutation<UserRsp, LoginUserArgs>(LOGIN_USER, 'loginUser');
 
 const CREATE_POST = gql`
-  mutation Mutation($args:CreateUserArgs!) {
+  mutation Mutation($args:CreatePostArgs!) {
     createPost(args:$args) {
-      _id at userID text replyTo,
+      _id at userId text replyTo,
     }
   }
 `;
-export const useCreatePost = () => useMutation<Post, CreatePostArgs>(CREATE_POST ,'createPost')
-
-export {useQuery, useMutation};
+export const useCreatePost = genUseMutation<Post, CreatePostArgs>(CREATE_POST ,'createPost')

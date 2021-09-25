@@ -1,7 +1,6 @@
 import {useState, useContext, createContext, useEffect} from 'react';
 import {Box, Button, ButtonProps} from '@mui/material';
 import {LoadingButton} from '@mui/lab';
-import {useCreateUser, useLoginUser} from './gql/hooks';
 import {User} from './gql/gql-interface';
 
 import LoginForm from './forms/LoginForm';

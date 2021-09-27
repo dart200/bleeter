@@ -1,30 +1,54 @@
 import {useEffect, useState} from 'react';
-import {Stack, Box, Typography, Divider, CircularProgress} from '@mui/material';
+import dayjs from 'dayjs'
+import {Stack, Box, Typography, Divider, CircularProgress, IconButton, Collapse} from '@mui/material';
+import {ChatBubbleOutline, Autorenew} from '@mui/icons-material';
+
 import {useLoginContext} from './login';
 import NewBleetForm from './forms/NewBleetForm';
 import UserBar from './comp/UserBar';
 import {useGetHome} from './gql/hooks';
 import {Post, User} from './gql/gql-interface';
 
-const Bleet = ({post, user}: {post: Post, user: User}) => <>
-  <Stack sx={{margin: '5%'}}>
-    <Stack direction="row" spacing={1}>
-      <Typography>{user.name}</Typography>
-      <Typography>@{user.username}</Typography>
-      <Typography>{post.at}</Typography>
+const Bleet = ({post, postUser, curUser}: {post: Post, postUser: User, curUser?: User}) => {
+  const [showComment, setShowComment] = useState(false);
+  const [comment, setComment] = useState('');
+
+  return <>
+    <Stack sx={{margin: '3.5%'}} spacing={1}>
+      <Stack direction="row" spacing={1}>
+        <Typography>{postUser?.name}</Typography>
+        <Typography>@{postUser?.username}</Typography>
+        <Typography>{dayjs(post.at).format('MMM D, YYYY')}</Typography>
+      </Stack>
+      <Typography>{post.text}</Typography>
+      {curUser && <>
+        <Stack direction="row" spacing={1}>
+          <IconButton onClick={() => setShowComment(cur => !cur)} color='primary'>
+            <ChatBubbleOutline/>
+          </IconButton>
+          <IconButton color="success" onClick={() => {}}>
+            <Autorenew />
+          </IconButton>
+        </Stack>
+        <Collapse in={showComment} sx={{width: '100%'}}>
+          <NewBleetForm replyTo={post._id}/>
+        </Collapse>
+      </>}
     </Stack>
-    <Typography>{post.text}</Typography>
-  </Stack>
-  <Divider />
-</>;
+    <Divider />
+  </>
+};
 
 type UserMap = {[id: string]: User};
+type PostMap = {[id: string]: Post};
+
 
 const Main = () => {
   const {user, jwt} = useLoginContext();
 
   const {data, loading, error} = useGetHome({...jwt && {token: jwt}});
-  const posts = data?.posts;
+  
+  const [posts, setPosts] = useState<PostMap>({});
   const [users, setUsers] = useState<UserMap>({});
 
   useEffect(() => {
@@ -44,7 +68,7 @@ const Main = () => {
         </Stack>
       : 
         data?.posts?.map(p => 
-          <Bleet key={p._id} post={p} user={users[p.userId]}/>
+          <Bleet key={p._id} post={p} postUser={users[p.userId]} curUser={user}/>
         )
       }
     </Stack>

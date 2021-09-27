@@ -22,7 +22,7 @@ const NewBleetForm = ({replyTo}: {replyTo?: any}) => {
       type="text"
       fullWidth
       variant="outlined"
-      placeholder="What's Happening?"
+      placeholder={replyTo ? 'Bleet your reply' : "What's Happening?"}
       multiline
       error={text.length > BLEET_MAX_LEN}
       helperText={text.length > BLEET_MAX_LEN ? "Please, we can't think *that* fast" : ' '}
@@ -33,7 +33,7 @@ const NewBleetForm = ({replyTo}: {replyTo?: any}) => {
       <Button
         onClick={submit}
         variant="contained">
-        Bleet
+        {replyTo ? 'Comment' : 'Bleet'}
       </Button>
     </Stack>
   </Stack>;

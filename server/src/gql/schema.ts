@@ -15,6 +15,7 @@ export const typeDefs = gql`
 		userId: ID!
 		text:String!
 		replyTo:ID
+		replies:[ID]
 	}
 
 	type GetPostsRsp {

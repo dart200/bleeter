@@ -6,6 +6,7 @@ export interface Post {
   at: number,
   text: string,
   replyTo?: string,
+  replies: string[],
 };
 
 export const postSchema = new mongoose.Schema({

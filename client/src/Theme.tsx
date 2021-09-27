@@ -29,7 +29,9 @@ export const ThemeProvider = ({children}) => (
     <CssBaseline/>
     <Box sx={{
       minHeight: '100vh',
-      minWidth: '100vw',
+      minWidth: '100%',
+      maxWidth: '100%',
+      overflowX: 'hidden',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',

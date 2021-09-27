@@ -13,6 +13,7 @@ import {Post, User} from './gql/gql-interface';
 const Bleet = ({post, postUser, curUser}: {post: Post, postUser?: User, curUser?: User}) => {
   const [showComment, setShowComment] = useState(false);
   const history = useHistory();
+  const isPostThread = history.location.pathname.match(post._id);
 
   const onShowComment = evt => {
     evt.stopPropagation();
@@ -23,6 +24,11 @@ const Bleet = ({post, postUser, curUser}: {post: Post, postUser?: User, curUser?
     evt.stopPropagation();
   };
 
+  const onClickBleet = () => {
+    if (!isPostThread)
+      history.push(`/${postUser?.username}/${post._id}`)
+  };
+
   return <>
     <Stack 
       sx={{
@@ -30,10 +36,18 @@ const Bleet = ({post, postUser, curUser}: {post: Post, postUser?: User, curUser?
         padding: '3.5%',
         textDecoration: 'unset',
         color: 'unset',
-        cursor: 'pointer',
+        ...!isPostThread && {
+          cursor: 'pointer',
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+          },
+          transition: [
+            'background-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+          ],
+        }
       }}
       spacing={1}
-      onClick={() => history.push(`/${postUser?.username}/${post._id}`)}>
+      onClick={onClickBleet}>
       <Stack direction="row" spacing={1}>
         <MuiLink 
           sx={{
@@ -83,7 +97,7 @@ const StatusBar = ({title}) => {
       }}>
       <IconButton
         onClick={history.length > 2 ? history.goBack : undefined}
-        component={history.length === 2 ? Link : undefined}
+        component={history.length === 2 ? Link as any : undefined}
         to="/">
         <ArrowBackIosNew />
       </IconButton>
@@ -95,19 +109,20 @@ const StatusBar = ({title}) => {
 
 type UserMap = {[id: string]: User};
 type PostMap = {[id: string]: Post};
+type URLParams = {username: string, postId: string}
 
 const Main = () => {
   const {user, jwt} = useLoginContext();
 
   // handle profile routes
-  const profileMatch = useRouteMatch({
+  const profileMatch = useRouteMatch<URLParams>({
     path: "/:username",
     exact: true,
   });
   const profileUsername = profileMatch?.params?.username;
 
   // handle post routes
-  const postMatch = useRouteMatch({
+  const postMatch = useRouteMatch<URLParams>({
     path: "/:username/:postId",
     exact: true,
   });

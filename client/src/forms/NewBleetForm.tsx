@@ -9,11 +9,16 @@ const NewBleetForm = ({replyTo}: {replyTo?: any}) => {
   const {jwt} = useLoginContext()
   const [createPost, {data, loading, error}] = useCreatePost();
   
-  const submit = () => {
+  const submit = evt => {
     if (!jwt || !text) return;
 
     createPost({token: jwt, text, replyTo});
     setText('');
+    evt.stopPropagation();
+  }
+
+  const onClick = evt => {
+    evt.stopPropagation();
   }
 
   return <Stack direction="column" spacing={0} sx={{alignItems: 'flex-end'}}>
@@ -26,6 +31,7 @@ const NewBleetForm = ({replyTo}: {replyTo?: any}) => {
       multiline
       error={text.length > BLEET_MAX_LEN}
       helperText={text.length > BLEET_MAX_LEN ? "Please, we can't think *that* fast" : ' '}
+      onClick={onClick}
       value={text}
       onChange={evt => setText(evt.target.value)}/>
     <Stack direction="row" spacing={2} sx={{alignItems: 'center'}}>

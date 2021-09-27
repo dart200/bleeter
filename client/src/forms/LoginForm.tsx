@@ -28,9 +28,9 @@ const LoginForm = ({open, onClose, onSuccess}) => {
       open={open}
       onClose={onClose}>
       <DialogContent sx={{
+        paddingTop: '10%',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
       }}>
         <Stack 
@@ -42,8 +42,7 @@ const LoginForm = ({open, onClose, onSuccess}) => {
             borderColor: 'primary.main',
             borderRadius: '10px',
             padding: '20px',
-          }}
-        > 
+          }}> 
           <Typography>
             Life's about to get quick...
           </Typography>

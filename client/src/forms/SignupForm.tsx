@@ -32,9 +32,9 @@ const SignupForm = ({open, onClose, onSuccess}) => {
       open={open}
       onClose={onClose}>
       <DialogContent sx={{
+        paddingTop: '10%',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
       }}>
         <Stack 

@@ -1,4 +1,6 @@
-import {Box, Divider, Typography} from '@mui/material';
+import {Box, Divider, Typography, Link as MuiLink} from '@mui/material';
+import {Link} from 'react-router-dom';
+
 import {useLoginContext} from '../login';
 import NewBleetForm from '../forms/NewBleetForm';
 
@@ -20,7 +22,7 @@ const UserBar = () => {
       </> : <>
         <Box>
           <Typography>{user.name}</Typography>
-          <Typography> @{user.username}</Typography>
+          <MuiLink component={Link} to={'/'+user.username}>@{user.username}</MuiLink>
         </Box>
         <LogoutUserButton />
       </>}

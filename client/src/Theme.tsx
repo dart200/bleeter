@@ -11,6 +11,11 @@ export const darkTheme = createTheme({
     background: {default: '#282C34'},
   },
   components: {
+    MuiLink: {
+      styleOverrides: {
+        root: {textDecoration: 'unset', color: 'unset', '&:hover': {textDecoration: 'underline'}},
+      }
+    }
     // needs to be solved first: https://github.com/mui-org/material-ui/issues/19466
     // MuiDialog: {variants: [
     //   // full page variant with default background color

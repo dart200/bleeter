@@ -25,7 +25,11 @@ export const typeDefs = gql`
 
 	type Query {
 		getUsers:[User]
-		getPosts(token: ID, profileId: ID):GetPostsRsp
+		# if postId is set, get that post and any replies
+		# if username is set, get all posts for user's profile
+		# if token is set, and neither username or postId is set, response
+		#		will not include logged in user's posts
+		getPosts(token: ID, username: ID, postId: ID):GetPostsRsp
 	}
 
 	input CreateUserArgs {

@@ -1,32 +1,62 @@
 import {useEffect, useState} from 'react';
 import dayjs from 'dayjs'
-import {Stack, Box, Typography, Divider, CircularProgress, IconButton, Collapse} from '@mui/material';
-import {ChatBubbleOutline, Autorenew} from '@mui/icons-material';
+import {Stack, Typography, Divider, CircularProgress, IconButton, Collapse, Link as MuiLink} from '@mui/material';
+import {ChatBubbleOutline, Autorenew, ArrowBackIosNew} from '@mui/icons-material';
+import {useRouteMatch, useHistory, Link, NavLink} from "react-router-dom";
 
 import {useLoginContext} from './login';
 import NewBleetForm from './forms/NewBleetForm';
 import UserBar from './comp/UserBar';
-import {useGetHome} from './gql/hooks';
+import {useGetPosts} from './gql/hooks';
 import {Post, User} from './gql/gql-interface';
 
-const Bleet = ({post, postUser, curUser}: {post: Post, postUser: User, curUser?: User}) => {
+const Bleet = ({post, postUser, curUser}: {post: Post, postUser?: User, curUser?: User}) => {
   const [showComment, setShowComment] = useState(false);
-  const [comment, setComment] = useState('');
+  const history = useHistory();
+
+  const onShowComment = evt => {
+    evt.stopPropagation();
+    setShowComment(cur => !cur);
+  }
+
+  const onReBleet = evt => {
+    evt.stopPropagation();
+  };
 
   return <>
-    <Stack sx={{margin: '3.5%'}} spacing={1}>
+    <Stack 
+      sx={{
+        position: 'relative',
+        padding: '3.5%',
+        textDecoration: 'unset',
+        color: 'unset',
+        cursor: 'pointer',
+      }}
+      spacing={1}
+      onClick={() => history.push(`/${postUser?.username}/${post._id}`)}>
       <Stack direction="row" spacing={1}>
-        <Typography>{postUser?.name}</Typography>
-        <Typography>@{postUser?.username}</Typography>
+        <MuiLink 
+          sx={{
+            textDecoration: 'unset',
+            color: 'unset',
+            '&:hover': {
+              textDecoration: 'underline',
+            }
+          }}
+          component={Link} 
+          to={'/'+postUser?.username}
+          onClick={evt => evt.stopPropagation()}>
+          {postUser?.name} @{postUser?.username}
+        </MuiLink>
         <Typography>{dayjs(post.at).format('MMM D, YYYY')}</Typography>
       </Stack>
       <Typography>{post.text}</Typography>
       {curUser && <>
         <Stack direction="row" spacing={1}>
-          <IconButton onClick={() => setShowComment(cur => !cur)} color='primary'>
+          <IconButton onClick={onShowComment} color='primary'>
             <ChatBubbleOutline/>
           </IconButton>
-          <IconButton color="success" onClick={() => {}}>
+          <IconButton color="success" onClick={onReBleet}>
             <Autorenew />
           </IconButton>
         </Stack>
@@ -39,14 +69,55 @@ const Bleet = ({post, postUser, curUser}: {post: Post, postUser: User, curUser?:
   </>
 };
 
+const StatusBar = ({title}) => {
+  const history = useHistory();
+
+  return <>
+    <Stack 
+      direction="row"
+      spacing={3}
+      sx={{
+        maxHeight: '100px',
+        padding: '3.5%',
+        alignItems: 'center',
+      }}>
+      <IconButton
+        onClick={history.length > 2 ? history.goBack : undefined}
+        component={history.length === 2 ? Link : undefined}
+        to="/">
+        <ArrowBackIosNew />
+      </IconButton>
+      <Typography>{title}</Typography>
+    </Stack>
+    <Divider />
+  </>;
+};
+
 type UserMap = {[id: string]: User};
 type PostMap = {[id: string]: Post};
-
 
 const Main = () => {
   const {user, jwt} = useLoginContext();
 
-  const {data, loading, error} = useGetHome({...jwt && {token: jwt}});
+  // handle profile routes
+  const profileMatch = useRouteMatch({
+    path: "/:username",
+    exact: true,
+  });
+  const profileUsername = profileMatch?.params?.username;
+
+  // handle post routes
+  const postMatch = useRouteMatch({
+    path: "/:username/:postId",
+    exact: true,
+  });
+  const postId = postMatch?.params?.postId;
+
+  const {data, loading, error} = useGetPosts({
+    ...jwt && {token: jwt},
+    ...profileUsername && {username: profileUsername},
+    ...postId && {postId},
+  });
   
   const [posts, setPosts] = useState<PostMap>({});
   const [users, setUsers] = useState<UserMap>({});
@@ -60,8 +131,14 @@ const Main = () => {
 
   return (
     <Stack sx={{flex: 1, minHeight: '100vh', maxWidth: 650}}>
-      <UserBar />
-      <Divider />
+      {profileMatch ? 
+        <StatusBar title="Profile"/>
+      : postMatch ?
+        <StatusBar title="Bleet"/>
+      : <>
+        <UserBar />
+        <Divider />
+      </>}
       {loading ?
         <Stack sx={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <CircularProgress />

@@ -7,7 +7,8 @@ const UserBar = () => {
   
   return <>
     <Box sx={{
-      padding:'5%',
+      maxHeight: '100px',
+      padding:'3.5%',
       display: 'flex',
       flexDirection: 'row',
       justifyContent: !user ? 'flex-end' : 'space-between',

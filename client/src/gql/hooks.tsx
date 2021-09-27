@@ -54,8 +54,8 @@ function genUseMutation<RspType, ArgType>(
 };
 
 const GET_POSTS = gql`
-  query Query($token: ID, $profileId: ID) {
-    getPosts(token:$token, profileId:$profileId) {
+  query Query($token: ID, $username: ID, $postId: ID) {
+    getPosts(token:$token, username:$username, postId:$postId) {
       posts {
         _id
         at
@@ -71,7 +71,7 @@ const GET_POSTS = gql`
     }
   }
 `
-export const useGetHome = genUseQuery<GetPostsRsp, GetPostsArgs>(GET_POSTS, 'getPosts');
+export const useGetPosts = genUseQuery<GetPostsRsp, GetPostsArgs>(GET_POSTS, 'getPosts');
 
 const CREATE_USER = gql`
   mutation Mutation($args:CreateUserArgs!) {

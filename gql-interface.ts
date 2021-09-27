@@ -43,7 +43,8 @@ export interface CreatePostArgs {
 
 export interface GetPostsArgs {
   token?: string,
-  profileId?: string,
+  username?: string,
+  postId?: string,
 };
 
 export interface GetPostsRsp {

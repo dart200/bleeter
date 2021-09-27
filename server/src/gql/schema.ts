@@ -14,7 +14,7 @@ export const typeDefs = gql`
 		at: Float!
 		userId: ID!
 		text:String!
-		replyTo:ID
+		replyTo:[ID]
 		replies:[ID]
 	}
 
@@ -57,7 +57,7 @@ export const typeDefs = gql`
 	input CreatePostArgs {
 		token: ID!,
     text: String,
-    replyTo: ID,
+    replyTo: [ID],
 	}
 
 	type Mutation{

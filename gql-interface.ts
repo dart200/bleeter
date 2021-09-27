@@ -32,13 +32,13 @@ export interface Post {
   at: number,
   userId: string,
   text: string,
-  replyTo?: string,
+  replyTo?: string[],
 };
 
 export interface CreatePostArgs {
   token: string,
   text: string,
-  replyTo?: string,
+  replyTo?: string[],
 };
 
 export interface GetPostsArgs {

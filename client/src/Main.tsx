@@ -86,7 +86,12 @@ const Main = () => {
         </Stack>
       : 
         data?.posts?.map(p => 
-          <Bleet key={p._id} post={p} postUser={users[p.userId]} curUser={user}/>
+          <Bleet
+            key={p._id}
+            post={p}
+            postUser={users[p.userId]}
+            curUser={user}
+            threadId={postId}/>
         )
       }
     </Stack>

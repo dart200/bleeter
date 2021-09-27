@@ -19,12 +19,18 @@ export const resolvers = {
 
       const [posts, users] = await Promise.all([
         Posts.find({
-          ...curUserId && {userId: {$ne: curUserId}},
-          ...profileUser && {userId: profileUser._id},
-          ...postId && {$or: [
+          ...curUserId && {
+            userId: {$ne: curUserId},
+          },
+          ...profileUser && {
+            userId: profileUser._id,
+          },
+          ...postId ? {$or: [
             {_id: postId},
             {replyTo: postId},
-          ]},
+          ]} : {
+            replyTo: {$exists: false},
+          },
         })
           .sort({at: postId ? 'asc' : 'desc'})
           .exec(),

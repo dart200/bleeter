@@ -1,87 +1,13 @@
 import {useEffect, useState} from 'react';
-import dayjs from 'dayjs'
-import {Stack, Typography, Divider, CircularProgress, IconButton, Collapse, Link as MuiLink} from '@mui/material';
-import {ChatBubbleOutline, Autorenew, ArrowBackIosNew} from '@mui/icons-material';
-import {useRouteMatch, useHistory, Link, NavLink} from "react-router-dom";
+import {Stack, Typography, Divider, CircularProgress, IconButton} from '@mui/material';
+import {ArrowBackIosNew} from '@mui/icons-material';
+import {useRouteMatch, useHistory, Link} from "react-router-dom";
 
 import {useLoginContext} from './login';
-import NewBleetForm from './forms/NewBleetForm';
-import UserBar from './comp/UserBar';
-import {useGetPosts} from './gql/hooks';
 import {Post, User} from './gql/gql-interface';
-
-const Bleet = ({post, postUser, curUser}: {post: Post, postUser?: User, curUser?: User}) => {
-  const [showComment, setShowComment] = useState(false);
-  const history = useHistory();
-  const isPostThread = history.location.pathname.match(post._id);
-
-  const onShowComment = evt => {
-    evt.stopPropagation();
-    setShowComment(cur => !cur);
-  }
-
-  const onReBleet = evt => {
-    evt.stopPropagation();
-  };
-
-  const onClickBleet = () => {
-    if (!isPostThread)
-      history.push(`/${postUser?.username}/${post._id}`)
-  };
-
-  return <>
-    <Stack 
-      sx={{
-        position: 'relative',
-        padding: '3.5%',
-        textDecoration: 'unset',
-        color: 'unset',
-        ...!isPostThread && {
-          cursor: 'pointer',
-          '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-          },
-          transition: [
-            'background-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-          ],
-        }
-      }}
-      spacing={1}
-      onClick={onClickBleet}>
-      <Stack direction="row" spacing={1}>
-        <MuiLink 
-          sx={{
-            textDecoration: 'unset',
-            color: 'unset',
-            '&:hover': {
-              textDecoration: 'underline',
-            }
-          }}
-          component={Link} 
-          to={'/'+postUser?.username}
-          onClick={evt => evt.stopPropagation()}>
-          {postUser?.name} @{postUser?.username}
-        </MuiLink>
-        <Typography>{dayjs(post.at).format('MMM D, YYYY')}</Typography>
-      </Stack>
-      <Typography>{post.text}</Typography>
-      {curUser && <>
-        <Stack direction="row" spacing={1}>
-          <IconButton onClick={onShowComment} color='primary'>
-            <ChatBubbleOutline/>
-          </IconButton>
-          <IconButton color="success" onClick={onReBleet}>
-            <Autorenew />
-          </IconButton>
-        </Stack>
-        <Collapse in={showComment} sx={{width: '100%'}}>
-          <NewBleetForm replyTo={post._id}/>
-        </Collapse>
-      </>}
-    </Stack>
-    <Divider />
-  </>
-};
+import {useGetPosts} from './gql/hooks';
+import UserBar from './comp/UserBar';
+import Bleet from './comp/Bleet';
 
 const StatusBar = ({title}) => {
   const history = useHistory();

@@ -1,10 +1,11 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useRef} from 'react';
 import {Stack, Typography, Divider, CircularProgress, IconButton} from '@mui/material';
 import {ArrowBackIosNew} from '@mui/icons-material';
 import {useRouteMatch, useHistory, Link} from "react-router-dom";
 
 import {useLoginContext} from './login';
-import {Post, User} from './gql/gql-interface';
+import {UserMap, PostMap} from './types';
+import {Post} from './gql/gql-interface';
 import {useGetPosts} from './gql/hooks';
 import UserBar from './comp/UserBar';
 import Bleet from './comp/Bleet';
@@ -33,8 +34,6 @@ const StatusBar = ({title}) => {
   </>;
 };
 
-type UserMap = {[id: string]: User};
-type PostMap = {[id: string]: Post};
 type URLParams = {username: string, postId: string}
 
 const Main = () => {
@@ -60,14 +59,17 @@ const Main = () => {
     ...postId && {postId},
   });
   
-  const [posts, setPosts] = useState<PostMap>({});
-  const [users, setUsers] = useState<UserMap>({});
+  const [posts, setPosts] = useState<Post[]>([]);
+  const postMap = useRef<PostMap>({}).current;
+  const userMap = useRef<UserMap>({}).current;
 
   useEffect(() => {
     if (!data) return;
-    const userMap:UserMap = {};
+
     data.users.map(u => userMap[u._id] = u);
-    setUsers(userMap);
+    data.posts.map(p => postMap[p._id] = p);
+
+    setPosts(data.posts);
   }, [data]);
 
   return (
@@ -85,13 +87,14 @@ const Main = () => {
           <CircularProgress />
         </Stack>
       : 
-        data?.posts?.map(p => 
+        posts?.map(p => 
           <Bleet
             key={p._id}
             post={p}
-            postUser={users[p.userId]}
+            threadId={postId}
             curUser={user}
-            threadId={postId}/>
+            userMap={userMap}
+            postMap={postMap}/>
         )
       }
     </Stack>

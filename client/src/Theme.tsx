@@ -8,7 +8,7 @@ import {createTheme, ThemeProvider as MuiThemeProvider} from '@mui/material/styl
 export const darkTheme = createTheme({
   palette: {
     mode: 'dark',
-    background: {default: '#282C34'},
+    background: {default: '#000000'},
   },
   components: {
     MuiLink: {

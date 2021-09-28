@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {useState} from 'react';
 import dayjs from 'dayjs'
 import {Stack, Typography, Divider, IconButton, Collapse, Link as MuiLink} from '@mui/material';
@@ -6,12 +7,14 @@ import {useHistory, Link} from "react-router-dom";
 
 import NewBleetForm from '../forms/NewBleetForm';
 import {Post, User} from '../gql/gql-interface';
+import {UserMap, PostMap} from '../types';
 
 const Bleet = (
-  {post, postUser, curUser, threadId}:
-  {post: Post, postUser?: User, curUser?: User, threadId?: string}
+  {post, curUser, threadId, userMap, postMap}:
+  {post: Post, curUser?: User, threadId?: string, userMap: UserMap, postMap: PostMap}
 ) => {
   const [showComment, setShowComment] = useState(false);
+  const postUser = userMap[post.userId];
   const history = useHistory();
   const isThreadOp = threadId === post._id;
 
@@ -29,6 +32,21 @@ const Bleet = (
       history.push(`/${postUser?.username}/${post._id}`)
   };
 
+  const replyingTo = !!post.replyTo?.length
+    && Object.keys(
+      // produces filtered list of user replied to
+      post.replyTo.reduce((acc, replyId) => {
+        const replyUserId = postMap[replyId]?.userId
+        const replyUser = userMap[replyUserId];
+        if (replyUser && replyUser?._id !==  postUser?._id)
+          acc['@'+replyUser.username] = true;
+        
+        return acc;
+      }, {} as {[id: string]:true})
+    ).join(' ');
+      
+      
+
   return <>
     <Stack 
       sx={{
@@ -39,15 +57,18 @@ const Bleet = (
         ...!isThreadOp && {
           cursor: 'pointer',
           '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            backgroundColor: 'rgba(255, 255, 255, 0.04)',
           },
           transition: [
             'background-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
           ],
-        }
+        },
       }}
       spacing={1}
       onClick={onClickBleet}>
+      {replyingTo && !!replyingTo?.length && 
+        <Typography>Replying to: {replyingTo}</Typography>
+      }
       <Stack direction="row" spacing={1}>
         <MuiLink 
           component={Link} 
@@ -57,8 +78,6 @@ const Bleet = (
         </MuiLink>
         <Typography>{dayjs(post.at).format('MMM D, YYYY')}</Typography>
       </Stack>
-      <Typography>{post.replyTo}</Typography>
-
       <Typography>{post.text}</Typography>
       {curUser && <>
         <Stack direction="row" spacing={1}>

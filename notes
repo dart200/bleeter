@@ -1,0 +1,10 @@
+Bugs:
+  - local cache does not update properly after mutation for useQuery not currently being rendered
+
+Unfinished Features:
+  - dockerized
+  - separate configs so private environment is not leaked accidentally in ui
+  - comment/retweet counts
+  - ui to make replies a bit more coherent
+  - error notifications
+  - notifications upon successful submissions

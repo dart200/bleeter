@@ -38,14 +38,12 @@ const Bleet = (
       post.replyTo.reduce((acc, replyId) => {
         const replyUserId = postMap[replyId]?.userId
         const replyUser = userMap[replyUserId];
-        if (replyUser && replyUser?._id !==  postUser?._id)
+        if (replyUser)
           acc['@'+replyUser.username] = true;
         
         return acc;
       }, {} as {[id: string]:true})
     ).join(' ');
-      
-      
 
   return <>
     <Stack 
@@ -67,16 +65,16 @@ const Bleet = (
       spacing={1}
       onClick={onClickBleet}>
       {replyingTo && !!replyingTo?.length && 
-        <Typography>Replying to: {replyingTo}</Typography>
+        <Typography variant="meta">Replying to: {replyingTo}</Typography>
       }
       <Stack direction="row" spacing={1}>
         <MuiLink 
           component={Link} 
           to={'/'+postUser?.username}
           onClick={evt => evt.stopPropagation()}>
-          {postUser?.name} @{postUser?.username}
+          <Typography variant="name">{postUser?.name}</Typography> <Typography variant="info">@{postUser?.username}</Typography>
         </MuiLink>
-        <Typography>{dayjs(post.at).format('MMM D, YYYY')}</Typography>
+        <Typography variant="info">{dayjs(post.at).format('MMM D, YYYY')}</Typography>
       </Stack>
       <Typography>{post.text}</Typography>
       {curUser && <>

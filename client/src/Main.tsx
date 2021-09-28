@@ -34,7 +34,7 @@ const StatusBar = ({title}) => {
   </>;
 };
 
-type URLParams = {username: string, postId: string}
+type URLParams = {username: string, threadId: string}
 
 const Main = () => {
   const {user, jwt} = useLoginContext();
@@ -48,15 +48,15 @@ const Main = () => {
 
   // handle post routes
   const postMatch = useRouteMatch<URLParams>({
-    path: "/:username/:postId",
+    path: "/:username/:threadId",
     exact: true,
   });
-  const postId = postMatch?.params?.postId;
+  const threadId = postMatch?.params?.threadId;
 
   const {data, loading, error} = useGetPosts({
     ...jwt && {token: jwt},
     ...profileUsername && {username: profileUsername},
-    ...postId && {postId},
+    ...threadId && {threadId},
   });
   
   const [posts, setPosts] = useState<Post[]>([]);
@@ -91,7 +91,7 @@ const Main = () => {
           <Bleet
             key={p._id}
             post={p}
-            threadId={postId}
+            threadId={threadId}
             curUser={user}
             userMap={userMap}
             postMap={postMap}/>

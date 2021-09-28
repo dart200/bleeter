@@ -25,11 +25,11 @@ export const typeDefs = gql`
 
 	type Query {
 		getUsers:[User]
-		# if postId is set, get that post and any replies
-		# if username is set, get all posts for user's profile
-		# if token is set, and neither username or postId is set, response
-		#		will not include logged in user's posts
-		getPosts(token: ID, username: ID, postId: ID):GetPostsRsp
+		# general get posts query:
+		#  @param postId - get that post and any replies
+		#  @param username - get all posts for user's profile
+		#  @param - response will not include logged in user's posts for home page
+		getPosts(token: ID, username: ID, threadId: ID):GetPostsRsp
 	}
 
 	input CreateUserArgs {

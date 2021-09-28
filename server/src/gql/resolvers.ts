@@ -9,13 +9,13 @@ import * as log from '../log';
 export const resolvers = {
   Query:{
     getUsers: async (root): Promise<User[]> => Users.find().exec(),
-    getPosts: async (root, {token, username, postId}: GetPostsArgs): Promise<GetPostsRsp> => {
+    getPosts: async (root, {token, username, threadId}: GetPostsArgs): Promise<GetPostsRsp> => {
       // if set, will filter out posts by current user
-      const curUserId = !username && !postId && token 
+      const curUserId = !username && !threadId && token 
         && await verifyJwt(token).then(ret => ret.id);
 
       // if set, will filter posts for a users profile
-      const profileUser = !postId && username && await Users.findOne({username});
+      const profileUser = !threadId && username && await Users.findOne({username});
 
       const [posts, users] = await Promise.all([
         Posts.find({
@@ -25,14 +25,14 @@ export const resolvers = {
           ...profileUser && {
             userId: profileUser._id,
           },
-          ...postId ? {$or: [
-            {_id: postId},
-            {replyTo: postId},
+          ...threadId ? {$or: [
+            {_id: threadId},
+            {replyTo: threadId},
           ]} : {
             replyTo: {$size: 0},
           },
         })
-          .sort({at: postId ? 'asc' : 'desc'})
+          .sort({at: threadId ? 'asc' : 'desc'})
           .exec(),
         Users.find().exec(),
       ]);

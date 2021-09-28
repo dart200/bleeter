@@ -54,8 +54,8 @@ function genUseMutation<RspType, ArgType>(
 };
 
 const GET_POSTS = gql`
-  query Query($token: ID, $username: ID, $postId: ID) {
-    getPosts(token:$token, username:$username, postId:$postId) {
+  query Query($token: ID, $username: ID, $threadId: ID) {
+    getPosts(token:$token, username:$username, threadId:$threadId) {
       posts {
         _id
         at

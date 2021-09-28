@@ -4,17 +4,21 @@ import {useCreatePost} from '../gql/hooks';
 import {BLEET_MAX_LEN} from '../config';
 import {useLoginContext} from '../login';
 
-const NewBleetForm = ({replyTo}: {replyTo?: string[]}) => {
+const NewBleetForm = (
+  {replyTo, onSuccess}:
+  {replyTo?: string[], onSuccess?: () => any}
+) => {
   const [text, setText] = useState('');
   const {jwt} = useLoginContext()
   const [createPost, {data, loading, error}] = useCreatePost();
   
   const submit = evt => {
+    evt.stopPropagation();
     if (!jwt || !text) return;
 
-    createPost({token: jwt, text, replyTo});
+    createPost({token: jwt, text, replyTo})
+      .then(() => onSuccess && onSuccess());
     setText('');
-    evt.stopPropagation();
   }
 
   const onClick = evt => {

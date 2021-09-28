@@ -23,6 +23,8 @@ const Bleet = (
     setShowComment(cur => !cur);
   }
 
+  const onBleetSuccess = () => setShowComment(false);
+
   const onReBleet = evt => {
     evt.stopPropagation();
   };

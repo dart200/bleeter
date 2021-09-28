@@ -5,8 +5,7 @@ export interface Post {
   userId: string,
   at: number,
   text: string,
-  replyTo?: string,
-  replies: string[],
+  replyTo?: string[],
 };
 
 export const postSchema = new mongoose.Schema({

@@ -39,7 +39,7 @@ function genUseMutation<RspType, ArgType>(
   funcName: string,
 ) {
   return () => {
-    const [func, rsp] = apolloUseMutation<RspType, {args: ArgType}>(statement);
+    const [func, rsp] = apolloUseMutation<RspType, {args: ArgType}>(statement, {refetchQueries: [GET_POSTS]});
     if (rsp.data) rsp.data = rsp.data[funcName];
   
     return [

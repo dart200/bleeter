@@ -29,7 +29,7 @@ export const resolvers = {
             {_id: postId},
             {replyTo: postId},
           ]} : {
-            replyTo: {$exists: false},
+            replyTo: {$size: 0},
           },
         })
           .sort({at: postId ? 'asc' : 'desc'})
@@ -110,6 +110,8 @@ export const resolvers = {
 
     createPost: async (root,{args: {token, text, replyTo}}: {args: CreatePostArgs})=>{
       const userId = await verifyJwt(token).then(ret => ret.id)
+
+      console.log({text, replyTo})
 
       const newPost = new Posts({
         at: Date.now(),

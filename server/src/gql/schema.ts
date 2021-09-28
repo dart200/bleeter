@@ -56,7 +56,7 @@ export const typeDefs = gql`
 
 	input CreatePostArgs {
 		token: ID!,
-    text: String,
+    text: String!,
     replyTo: [ID],
 	}
 

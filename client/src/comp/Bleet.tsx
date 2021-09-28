@@ -35,17 +35,10 @@ const Bleet = (
   };
 
   const replyingTo = !!post.replyTo?.length
-    && Object.keys(
-      // produces filtered list of user replied to
-      post.replyTo.reduce((acc, replyId) => {
-        const replyUserId = postMap[replyId]?.userId
-        const replyUser = userMap[replyUserId];
-        if (replyUser)
-          acc['@'+replyUser.username] = true;
-        
-        return acc;
-      }, {} as {[id: string]:true})
-    ).join(' ');
+    && _(post.replyTo)
+      .uniq()
+      .map(replyPost => '@'+userMap[postMap[replyPost].userId].username)
+      .join(', ')
 
   return <>
     <Stack 
@@ -89,10 +82,9 @@ const Bleet = (
           </IconButton>
         </Stack>
         <Collapse in={showComment} sx={{width: '100%'}}>
-          <NewBleetForm replyTo={[
-            post._id,
-            ...(threadId && !isThreadOp) ? [threadId] : [],
-          ]}/>
+          <NewBleetForm 
+            replyTo={_.uniq([post._id].concat(...post.replyTo || []))}
+            onSuccess={onBleetSuccess}/>
         </Collapse>
       </>}
     </Stack>

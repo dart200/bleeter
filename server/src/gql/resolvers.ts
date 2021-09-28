@@ -1,6 +1,6 @@
 import {Users,Posts} from '../db/connect';
 import {
-  User, 
+  User, Post,
   GetPostsArgs, GetPostsRsp,
   CreateUserArgs, LoginUserArgs, UserRsp, CreatePostArgs} from './gql-interface';
 import {getPwdHash, cmpPwd, genJwt, verifyJwt} from '../pwd';
@@ -37,7 +37,12 @@ export const resolvers = {
         Users.find().exec(),
       ]);
 
-      return {posts, users}
+      // for any found posts, lookup retweet sources
+      const retweets = (await Promise.all(
+        posts.filter(p => p.retweet).map(p => Posts.findById(p.retweet))
+      )).filter(ret => !!ret) as Post[];
+
+      return {retweets, posts, users}
     },
   },
   Mutation:{
@@ -108,16 +113,20 @@ export const resolvers = {
       return user;
     },
 
-    createPost: async (root,{args: {token, text, replyTo}}: {args: CreatePostArgs})=>{
+    createPost: async (root,{args: {token, text, replyTo, retweet}}: {args: CreatePostArgs})=>{
       const userId = await verifyJwt(token).then(ret => ret.id)
 
-      console.log({text, replyTo})
+      if (!text && !retweet)
+        throw Error('Missing content!');
+
+      console.log({text, replyTo, retweet})
 
       const newPost = new Posts({
         at: Date.now(),
         userId,
         text,
         replyTo,
+        retweet, 
       });      
       await newPost.save();
       return newPost;

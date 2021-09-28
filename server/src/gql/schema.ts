@@ -13,13 +13,17 @@ export const typeDefs = gql`
 		_id:ID!
 		at: Float!
 		userId: ID!
-		text:String!
+		text:String
 		replyTo:[ID]
-		replies:[ID]
+		retweet: ID
 	}
 
 	type GetPostsRsp {
+		# posts filtered for current query
 		posts:[Post],
+		# retweet sources
+		retweets:[Post],
+		# full list of users
 		users:[User],
 	}
 
@@ -58,6 +62,7 @@ export const typeDefs = gql`
 		token: ID!,
     text: String!,
     replyTo: [ID],
+		retweet: ID,
 	}
 
 	type Mutation{

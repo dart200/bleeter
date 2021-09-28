@@ -7,35 +7,49 @@ import {useHistory, Link} from "react-router-dom";
 
 import NewBleetForm from '../forms/NewBleetForm';
 import {Post, User} from '../gql/gql-interface';
+import {useCreatePost} from '../gql/hooks'
 import {UserMap, PostMap} from '../types';
+import {useLoginContext} from '../login';
 
 const Bleet = (
-  {post, curUser, threadId, userMap, postMap}:
-  {post: Post, curUser?: User, threadId?: string, userMap: UserMap, postMap: PostMap}
+  {post, threadId, userMap, postMap}:
+  {post: Post, threadId?: string, userMap: UserMap, postMap: PostMap}
 ) => {
-  const [showComment, setShowComment] = useState(false);
-  const postUser = userMap[post.userId];
   const history = useHistory();
+  const {user, jwt} = useLoginContext();
+  const [createPost, {data, loading, error}] = useCreatePost();
+  const [showComment, setShowComment] = useState(false);
+
+  const postUser = userMap[post.userId];
+
+  const displayPost = post.retweet ? postMap[post.retweet] : post;
+  const displayPostUser = userMap[displayPost.userId];
   const isThreadOp = threadId === post._id;
 
   const onShowComment = evt => {
     evt.stopPropagation();
     setShowComment(cur => !cur);
-  }
+  };
 
   const onBleetSuccess = () => setShowComment(false);
 
   const onReBleet = evt => {
     evt.stopPropagation();
+    if (!jwt) return
+
+    createPost({
+      token: jwt,
+      retweet: post.retweet || post._id,
+    });
   };
 
   const onClickBleet = () => {
     if (!isThreadOp)
-      history.push(`/${postUser?.username}/${post._id}`)
+      history.push(`/${displayPostUser?.username}/${displayPost._id}`)
   };
 
-  const replyingTo = !!post.replyTo?.length
-    && _(post.replyTo)
+  const replyingTo = !!displayPost.replyTo?.length
+    && _(displayPost.replyTo)
       .uniq()
       .map(replyPost => '@'+userMap[postMap[replyPost].userId].username)
       .join(', ')
@@ -49,30 +63,29 @@ const Bleet = (
         color: 'unset',
         ...!isThreadOp && {
           cursor: 'pointer',
-          '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.04)',
-          },
-          transition: [
-            'background-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-          ],
+          '&:hover': {backgroundColor: 'rgba(255, 255, 255, 0.04)'},
+          transition: ['background-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'],
         },
       }}
       spacing={1}
       onClick={onClickBleet}>
+      { post.retweet &&
+        <Typography variant="meta">{postUser.name} Rebleeted</Typography>
+      }
       {replyingTo && !!replyingTo?.length && 
         <Typography variant="meta">Replying to: {replyingTo}</Typography>
       }
       <Stack direction="row" spacing={1}>
         <MuiLink 
           component={Link} 
-          to={'/'+postUser?.username}
+          to={'/'+displayPostUser?.username}
           onClick={evt => evt.stopPropagation()}>
-          <Typography variant="name">{postUser?.name}</Typography> <Typography variant="info">@{postUser?.username}</Typography>
+          <Typography variant="name">{displayPostUser?.name}</Typography> <Typography variant="info">@{displayPostUser?.username}</Typography>
         </MuiLink>
-        <Typography variant="info">{dayjs(post.at).format('MMM D, YYYY')}</Typography>
+        <Typography variant="info">{dayjs(displayPost.at).format('MMM D, YYYY')}</Typography>
       </Stack>
-      <Typography>{post.text}</Typography>
-      {curUser && <>
+      <Typography>{displayPost.text}</Typography>
+      {user && <>
         <Stack direction="row" spacing={1}>
           <IconButton onClick={onShowComment} color='primary'>
             <ChatBubbleOutline/>
@@ -83,7 +96,7 @@ const Bleet = (
         </Stack>
         <Collapse in={showComment} sx={{width: '100%'}}>
           <NewBleetForm 
-            replyTo={_.uniq([post._id].concat(...post.replyTo || []))}
+            replyTo={_.uniq([displayPost._id].concat(...displayPost.replyTo || []))}
             onSuccess={onBleetSuccess}/>
         </Collapse>
       </>}

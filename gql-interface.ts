@@ -31,14 +31,16 @@ export interface Post {
   _id: string,
   at: number,
   userId: string,
-  text: string,
+  text?: string,
   replyTo?: string[],
+  retweet?: string,
 };
 
 export interface CreatePostArgs {
   token: string,
-  text: string,
+  text?: string,
   replyTo?: string[],
+  retweet?: string,
 };
 
 export interface GetPostsArgs {
@@ -50,4 +52,5 @@ export interface GetPostsArgs {
 export interface GetPostsRsp {
   posts: Post[],
   users: User[],
+  retweets: Post[],
 };

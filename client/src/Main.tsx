@@ -68,6 +68,7 @@ const Main = () => {
 
     data.users.map(u => userMap[u._id] = u);
     data.posts.map(p => postMap[p._id] = p);
+    data.retweets.map(p => postMap[p._id] = p);
 
     setPosts(data.posts);
   }, [data]);
@@ -92,7 +93,6 @@ const Main = () => {
             key={p._id}
             post={p}
             threadId={threadId}
-            curUser={user}
             userMap={userMap}
             postMap={postMap}/>
         )

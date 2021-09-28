@@ -56,18 +56,9 @@ function genUseMutation<RspType, ArgType>(
 const GET_POSTS = gql`
   query Query($token: ID, $username: ID, $threadId: ID) {
     getPosts(token:$token, username:$username, threadId:$threadId) {
-      posts {
-        _id
-        at
-        userId
-        text
-        replyTo
-      }
-      users {
-        _id
-        name
-        username
-      }
+      posts {_id at userId text replyTo retweet}
+      retweets {_id at userId text replyTo retweet}
+      users {_id name username}
     }
   }
 `
@@ -96,7 +87,7 @@ export const useLoginUser = genUseMutation<UserRsp, LoginUserArgs>(LOGIN_USER, '
 const CREATE_POST = gql`
   mutation Mutation($args:CreatePostArgs!) {
     createPost(args:$args) {
-      _id at userId text replyTo,
+      _id at userId text replyTo, retweet,
     }
   }
 `;
